@@ -11,10 +11,29 @@
         <!-- Banner -->
         <div class="banner">
             <h1 class="banner-title">📚 Lykkes Mattebok ✨</h1>
+            <div class="mode-indicator hidden" id="modeIndicator"></div>
+        </div>
+
+        <!-- Menu screen -->
+        <div class="menu-screen" id="menuScreen">
+            <h2 class="menu-title">Välj spelläge</h2>
+            <div class="menu-buttons">
+                <button class="mode-btn" data-mode="normal">
+                    <span class="mode-icon">➕➖</span>
+                    <span class="mode-name">Vanlig räkning</span>
+                    <span class="mode-desc">Öva addition och subtraktion</span>
+                </button>
+                <button class="mode-btn" data-mode="pairs">
+                    <span class="mode-icon">🔟</span>
+                    <span class="mode-name">10-kompisar</span>
+                    <span class="mode-desc">Hitta siffror som blir 10</span>
+                </button>
+            </div>
         </div>
 
         <!-- Header with stats -->
-        <div class="header">
+        <div class="header hidden" id="gameHeader">
+            <button class="back-to-menu-btn" id="backToMenuBtn" title="Tillbaka till meny">🏠</button>
             <div class="stats">
                 <div class="streak-display">
                     <span class="label">Rad:</span>
@@ -35,7 +54,7 @@
         </div>
 
         <!-- Main game area -->
-        <div class="game-area">
+        <div class="game-area hidden" id="gameArea">
             <!-- Question box -->
             <div class="question-box">
                 <div class="equation" id="equation">3 + 3</div>

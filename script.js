@@ -4,6 +4,7 @@ let bestStreak = 0;
 let strikes = 0;
 let currentAnswer = 0;
 let isAnswering = false;
+let gameMode = null; // 'normal' or 'pairs'
 
 // DOM elements
 const equationEl = document.getElementById('equation');
@@ -16,6 +17,12 @@ const gameOverModal = document.getElementById('gameOverModal');
 const finalStreakEl = document.getElementById('finalStreak');
 const restartBtn = document.getElementById('restartBtn');
 const modalMessage = document.getElementById('modalMessage');
+const menuScreen = document.getElementById('menuScreen');
+const gameArea = document.getElementById('gameArea');
+const gameHeader = document.getElementById('gameHeader');
+const modeIndicator = document.getElementById('modeIndicator');
+const backToMenuBtn = document.getElementById('backToMenuBtn');
+const modeButtons = document.querySelectorAll('.mode-btn');
 
 // Encouraging messages in Swedish
 const encouragingMessages = [
@@ -28,29 +35,100 @@ const encouragingMessages = [
 
 // Initialize game
 function init() {
-    loadBestStreak();
-    updateDisplay();
-    generateNewProblem();
+    // Show menu screen initially
+    showMenu();
 
     // Add event listeners
     answerButtons.forEach(btn => {
         btn.addEventListener('click', handleAnswer);
     });
 
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', handleModeSelection);
+    });
+
     restartBtn.addEventListener('click', restartGame);
+    backToMenuBtn.addEventListener('click', handleBackToMenu);
 }
 
-// Load best streak from localStorage
+// Load best streak from localStorage (mode-specific)
 function loadBestStreak() {
-    const saved = localStorage.getItem('bestStreak');
+    if (!gameMode) return;
+    const key = `bestStreak_${gameMode}`;
+    const saved = localStorage.getItem(key);
     if (saved) {
         bestStreak = parseInt(saved);
+    } else {
+        bestStreak = 0;
     }
 }
 
-// Save best streak to localStorage
+// Save best streak to localStorage (mode-specific)
 function saveBestStreak() {
-    localStorage.setItem('bestStreak', bestStreak);
+    if (!gameMode) return;
+    const key = `bestStreak_${gameMode}`;
+    localStorage.setItem(key, bestStreak);
+}
+
+// Show menu screen
+function showMenu() {
+    menuScreen.classList.remove('hidden');
+    gameArea.classList.add('hidden');
+    gameHeader.classList.add('hidden');
+    modeIndicator.classList.add('hidden');
+    gameMode = null;
+}
+
+// Hide menu and show game
+function showGame() {
+    menuScreen.classList.add('hidden');
+    gameArea.classList.remove('hidden');
+    gameHeader.classList.remove('hidden');
+    modeIndicator.classList.remove('hidden');
+    updateModeIndicator();
+}
+
+// Update mode indicator
+function updateModeIndicator() {
+    if (gameMode === 'normal') {
+        modeIndicator.textContent = '➕➖ Vanlig räkning';
+        modeIndicator.className = 'mode-indicator normal-mode';
+    } else if (gameMode === 'pairs') {
+        modeIndicator.textContent = '🔟 10-kompisar';
+        modeIndicator.className = 'mode-indicator pairs-mode';
+    }
+}
+
+// Handle mode selection from menu
+function handleModeSelection(e) {
+    const selectedMode = e.currentTarget.dataset.mode;
+    gameMode = selectedMode;
+
+    // Reset game state
+    currentStreak = 0;
+    strikes = 0;
+
+    // Load best streak for this mode
+    loadBestStreak();
+
+    // Show game and start
+    showGame();
+    updateDisplay();
+    generateNewProblem();
+}
+
+// Handle back to menu button
+function handleBackToMenu() {
+    if (isAnswering) return;
+
+    // Ask for confirmation if game is in progress
+    if (currentStreak > 0 || strikes > 0) {
+        if (!confirm('Är du säker på att du vill avsluta? Din nuvarande rad kommer att förloras.')) {
+            return;
+        }
+    }
+
+    showMenu();
 }
 
 // Generate a random number within range
@@ -60,6 +138,26 @@ function randomNumber(min, max) {
 
 // Generate new math problem
 function generateNewProblem() {
+    if (gameMode === 'pairs') {
+        generatePairsProblem();
+    } else if (gameMode === 'normal') {
+        generateNormalProblem();
+    }
+
+    // Clear feedback
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'feedback';
+
+    // Re-enable buttons
+    isAnswering = false;
+    answerButtons.forEach(btn => {
+        btn.disabled = false;
+        btn.className = 'answer-btn';
+    });
+}
+
+// Generate normal addition/subtraction problem
+function generateNormalProblem() {
     const num1 = randomNumber(1, 10);
     const num2 = randomNumber(1, 10);
     const isAddition = Math.random() < 0.5;
@@ -82,22 +180,27 @@ function generateNewProblem() {
 
     // Generate answer options
     generateAnswerOptions(answer);
+}
 
-    // Clear feedback
-    feedbackEl.textContent = '';
-    feedbackEl.className = 'feedback';
+// Generate 10-pairs problem
+function generatePairsProblem() {
+    const num = randomNumber(0, 10);
+    const answer = 10 - num;
 
-    // Re-enable buttons
-    isAnswering = false;
-    answerButtons.forEach(btn => {
-        btn.disabled = false;
-        btn.className = 'answer-btn';
-    });
+    currentAnswer = answer;
+    equationEl.textContent = `Vad är 10-kompis till ${num}?`;
+
+    // Generate answer options
+    generateAnswerOptions(answer);
 }
 
 // Generate 4 answer options (1 correct, 3 wrong)
 function generateAnswerOptions(correctAnswer) {
     const answers = [correctAnswer];
+
+    // Determine range based on game mode
+    const maxValue = gameMode === 'pairs' ? 10 : 20;
+    const minValue = gameMode === 'pairs' ? 0 : 1;
 
     // Generate 3 unique wrong answers
     while (answers.length < 4) {
@@ -111,8 +214,8 @@ function generateAnswerOptions(correctAnswer) {
             wrongAnswer = correctAnswer - offset;
         }
 
-        // Ensure answer is positive and unique
-        if (wrongAnswer > 0 && wrongAnswer <= 20 && !answers.includes(wrongAnswer)) {
+        // Ensure answer is within valid range and unique
+        if (wrongAnswer >= minValue && wrongAnswer <= maxValue && !answers.includes(wrongAnswer)) {
             answers.push(wrongAnswer);
         }
     }
@@ -245,11 +348,15 @@ function showGameOver() {
     gameOverModal.classList.remove('hidden');
 }
 
-// Restart game
+// Restart game (in current mode)
 function restartGame() {
     currentStreak = 0;
     strikes = 0;
     gameOverModal.classList.add('hidden');
+
+    // Reload best streak for current mode
+    loadBestStreak();
+
     updateDisplay();
     generateNewProblem();
 }

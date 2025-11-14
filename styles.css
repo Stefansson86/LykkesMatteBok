@@ -23,6 +23,10 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
+.hidden {
+    display: none;
+}
+
 /* Banner */
 .banner {
     background: #fff9e6;
@@ -40,6 +44,28 @@ body {
     color: #6c5ce7;
     margin: 0;
     letter-spacing: 1px;
+}
+
+.mode-indicator {
+    margin-top: 10px;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 15px;
+    display: inline-block;
+    animation: fadeIn 0.5s ease;
+}
+
+.mode-indicator.normal-mode {
+    background: #e8f4fd;
+    color: #0984e3;
+    border: 2px solid #74b9ff;
+}
+
+.mode-indicator.pairs-mode {
+    background: #ffeaa7;
+    color: #d63031;
+    border: 2px solid #fdcb6e;
 }
 
 /* Header stats */
@@ -96,6 +122,80 @@ body {
 .heart.lost {
     opacity: 0.2;
     filter: grayscale(100%);
+}
+
+.back-to-menu-btn {
+    background: #74b9ff;
+    border: 2px solid #0984e3;
+    border-radius: 12px;
+    padding: 10px 15px;
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.back-to-menu-btn:hover {
+    background: #0984e3;
+    transform: scale(1.1);
+}
+
+/* Menu screen */
+.menu-screen {
+    text-align: center;
+    padding: 20px 0;
+    animation: fadeIn 0.5s ease;
+}
+
+.menu-title {
+    font-size: 2em;
+    color: #6c5ce7;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mode-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 30px 20px;
+    font-size: 1em;
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+    border: 3px solid #6c5ce7;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: inherit;
+}
+
+.mode-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #6c5ce7 0%, #5f4dd6 100%);
+}
+
+.mode-icon {
+    font-size: 3em;
+}
+
+.mode-name {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.mode-desc {
+    font-size: 0.9em;
+    opacity: 0.9;
 }
 
 /* Game area */
