@@ -6,23 +6,23 @@ let currentAnswer = 0;
 let isAnswering = false;
 let gameMode = null; // 'normal' or 'pairs'
 
-// DOM elements
-const equationEl = document.getElementById('equation');
-const currentStreakEl = document.getElementById('currentStreak');
-const bestStreakEl = document.getElementById('bestStreak');
-const livesEl = document.getElementById('lives');
-const feedbackEl = document.getElementById('feedback');
-const answerButtons = document.querySelectorAll('.answer-btn');
-const gameOverModal = document.getElementById('gameOverModal');
-const finalStreakEl = document.getElementById('finalStreak');
-const restartBtn = document.getElementById('restartBtn');
-const modalMessage = document.getElementById('modalMessage');
-const menuScreen = document.getElementById('menuScreen');
-const gameArea = document.getElementById('gameArea');
-const gameHeader = document.getElementById('gameHeader');
-const modeIndicator = document.getElementById('modeIndicator');
-const backToMenuBtn = document.getElementById('backToMenuBtn');
-const modeButtons = document.querySelectorAll('.mode-btn');
+// DOM elements (initialized in init())
+let equationEl;
+let currentStreakEl;
+let bestStreakEl;
+let livesEl;
+let feedbackEl;
+let answerButtons;
+let gameOverModal;
+let finalStreakEl;
+let restartBtn;
+let modalMessage;
+let menuScreen;
+let gameArea;
+let gameHeader;
+let modeIndicator;
+let backToMenuBtn;
+let modeButtons;
 
 // Encouraging messages in Swedish
 const encouragingMessages = [
@@ -35,6 +35,24 @@ const encouragingMessages = [
 
 // Initialize game
 function init() {
+    // Initialize DOM elements
+    equationEl = document.getElementById('equation');
+    currentStreakEl = document.getElementById('currentStreak');
+    bestStreakEl = document.getElementById('bestStreak');
+    livesEl = document.getElementById('lives');
+    feedbackEl = document.getElementById('feedback');
+    answerButtons = document.querySelectorAll('.answer-btn');
+    gameOverModal = document.getElementById('gameOverModal');
+    finalStreakEl = document.getElementById('finalStreak');
+    restartBtn = document.getElementById('restartBtn');
+    modalMessage = document.getElementById('modalMessage');
+    menuScreen = document.getElementById('menuScreen');
+    gameArea = document.getElementById('gameArea');
+    gameHeader = document.getElementById('gameHeader');
+    modeIndicator = document.getElementById('modeIndicator');
+    backToMenuBtn = document.getElementById('backToMenuBtn');
+    modeButtons = document.querySelectorAll('.mode-btn');
+
     // Show menu screen initially
     showMenu();
 
