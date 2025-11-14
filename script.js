@@ -23,6 +23,7 @@ let gameHeader;
 let normalModeBtn;
 let pairsModeBtn;
 let backBtn;
+let backBtnContainer;
 
 // Encouraging messages in Swedish
 const encouragingMessages = [
@@ -52,6 +53,7 @@ function init() {
     normalModeBtn = document.getElementById('normalModeBtn');
     pairsModeBtn = document.getElementById('pairsModeBtn');
     backBtn = document.getElementById('backBtn');
+    backBtnContainer = document.getElementById('backBtnContainer');
 
     // Add event listeners for answer buttons
     answerButtons.forEach(btn => {
@@ -78,6 +80,7 @@ function showMenu() {
     gameHeader.classList.add('hidden');
     gameArea.classList.add('hidden');
     feedbackEl.classList.add('hidden');
+    backBtnContainer.classList.add('hidden');
     gameMode = null;
 }
 
@@ -95,6 +98,7 @@ function startGame(mode) {
     gameHeader.classList.remove('hidden');
     gameArea.classList.remove('hidden');
     feedbackEl.classList.remove('hidden');
+    backBtnContainer.classList.remove('hidden');
 
     // Update display and generate first problem
     updateDisplay();
@@ -187,7 +191,7 @@ function generatePairsProblem() {
     const answer = 10 - num;
 
     currentAnswer = answer;
-    equationEl.textContent = `Vad är 10-kompis till ${num}?`;
+    equationEl.textContent = `${num} + _ = 10`;
 
     // Generate answer options
     generateAnswerOptions(answer);
