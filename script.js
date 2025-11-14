@@ -150,6 +150,8 @@ function generateNewProblem() {
 
     // Completely reset all buttons
     answerButtons.forEach(btn => {
+        // Remove focus to clear hover/active states
+        btn.blur();
         // Stop any animations
         btn.style.animation = 'none';
         // Remove all state classes
@@ -158,19 +160,25 @@ function generateNewProblem() {
         btn.className = 'answer-btn';
         // Enable button
         btn.disabled = false;
-        // Clear all inline styles
+    });
+
+    // Force immediate reflow
+    void document.body.offsetHeight;
+
+    // Remove all inline styles after reflow
+    answerButtons.forEach(btn => {
         btn.removeAttribute('style');
     });
 
-    // Use requestAnimationFrame to ensure DOM has updated
-    requestAnimationFrame(() => {
+    // Use a small delay to ensure browser has time to clear styles
+    setTimeout(() => {
         // Now generate the new problem
         if (gameMode === 'pairs') {
             generatePairsProblem();
         } else {
             generateNormalProblem();
         }
-    });
+    }, 50);
 }
 
 // Generate normal addition/subtraction problem
