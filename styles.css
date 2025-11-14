@@ -9,9 +9,10 @@ body {
     background: #f0f4f8;
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding: 20px;
+    flex-direction: column;
 }
 
 .container {
@@ -19,8 +20,11 @@ body {
     max-width: 600px;
     background: white;
     border-radius: 30px;
-    padding: 30px;
+    padding: 25px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    min-height: 85vh;
 }
 
 /* Utility classes */
@@ -33,32 +37,36 @@ body {
     text-align: center;
     padding: 20px 0;
     animation: fadeIn 0.5s ease;
+    margin-top: auto;
+    width: 100%;
 }
 
 .menu-title {
-    font-size: 2em;
+    font-size: 1.5em;
     color: #6c5ce7;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     font-weight: bold;
 }
 
 .menu-buttons {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: center;
 }
 
 .mode-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    width: 100%;
-    padding: 30px 20px;
+    gap: 6px;
+    flex: 1;
+    max-width: 180px;
+    padding: 20px 15px;
     font-size: 1em;
     background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
     border: 3px solid #6c5ce7;
-    border-radius: 20px;
+    border-radius: 15px;
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -67,38 +75,39 @@ body {
 }
 
 .mode-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     background: linear-gradient(135deg, #6c5ce7 0%, #5f4dd6 100%);
 }
 
 .mode-icon {
-    font-size: 3em;
+    font-size: 2.5em;
 }
 
 .mode-name {
-    font-size: 1.5em;
+    font-size: 1.1em;
     font-weight: bold;
 }
 
 .mode-desc {
-    font-size: 0.9em;
+    font-size: 0.75em;
     opacity: 0.9;
+    line-height: 1.2;
 }
 
 /* Banner */
 .banner {
     background: #fff9e6;
     border-radius: 20px;
-    padding: 25px 20px;
-    margin-bottom: 25px;
+    padding: 20px 15px;
+    margin-bottom: 20px;
     border: 3px solid #ffd93d;
     text-align: center;
     animation: fadeIn 0.5s ease;
 }
 
 .banner-title {
-    font-size: 2.2em;
+    font-size: 1.8em;
     font-weight: bold;
     color: #6c5ce7;
     margin: 0;
@@ -190,13 +199,13 @@ body {
 .question-box {
     background: #dfe6e9;
     border-radius: 20px;
-    padding: 40px;
-    margin-bottom: 30px;
+    padding: 30px;
+    margin-bottom: 25px;
     border: 3px solid #b2bec3;
 }
 
 .equation {
-    font-size: 3em;
+    font-size: 2.5em;
     font-weight: bold;
     text-align: center;
     color: #2d3436;
@@ -206,7 +215,7 @@ body {
 .answer-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 20px;
 }
 
@@ -214,8 +223,8 @@ body {
     background: #a29bfe;
     border: 3px solid #6c5ce7;
     border-radius: 20px;
-    padding: 40px;
-    font-size: 2em;
+    padding: 35px;
+    font-size: 1.8em;
     font-weight: bold;
     color: white;
     cursor: pointer;
@@ -362,28 +371,55 @@ body {
 /* Responsive design */
 @media (max-width: 600px) {
     .container {
-        padding: 20px;
+        padding: 15px;
     }
 
     .banner-title {
-        font-size: 1.6em;
+        font-size: 1.5em;
     }
 
     .equation {
-        font-size: 2.5em;
+        font-size: 2em;
     }
 
     .answer-btn {
-        padding: 30px;
-        font-size: 1.5em;
+        padding: 25px;
+        font-size: 1.3em;
     }
 
     .header {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
     }
 
     .stats {
         justify-content: center;
+    }
+
+    .menu-title {
+        font-size: 1.3em;
+        margin-bottom: 15px;
+    }
+
+    .menu-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .mode-btn {
+        max-width: 100%;
+        padding: 18px 12px;
+    }
+
+    .mode-icon {
+        font-size: 2em;
+    }
+
+    .mode-name {
+        font-size: 1em;
+    }
+
+    .mode-desc {
+        font-size: 0.7em;
     }
 }
