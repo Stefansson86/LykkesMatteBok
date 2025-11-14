@@ -141,6 +141,22 @@ function randomNumber(min, max) {
 
 // Generate new math problem based on game mode
 function generateNewProblem() {
+    // First, completely reset all buttons to their default state
+    answerButtons.forEach(btn => {
+        // Remove all possible state classes
+        btn.classList.remove('correct', 'wrong');
+        // Reset to only the base class
+        btn.className = 'answer-btn';
+        // Re-enable the button
+        btn.disabled = false;
+        // Clear any inline styles that might have been applied
+        btn.style.cssText = '';
+    });
+
+    // Force a reflow to ensure all styles are cleared
+    void document.body.offsetHeight;
+
+    // Now generate the new problem
     if (gameMode === 'pairs') {
         generatePairsProblem();
     } else {
@@ -151,16 +167,8 @@ function generateNewProblem() {
     feedbackEl.textContent = '';
     feedbackEl.className = 'feedback';
 
-    // Re-enable buttons and clear all classes
+    // Reset answering flag
     isAnswering = false;
-    answerButtons.forEach(btn => {
-        btn.disabled = false;
-        // Remove all classes and reset to base state
-        btn.classList.remove('correct', 'wrong');
-        btn.className = 'answer-btn';
-        // Force a reflow to ensure styles are reset
-        void btn.offsetWidth;
-    });
 }
 
 // Generate normal addition/subtraction problem
