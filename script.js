@@ -151,11 +151,15 @@ function generateNewProblem() {
     feedbackEl.textContent = '';
     feedbackEl.className = 'feedback';
 
-    // Re-enable buttons
+    // Re-enable buttons and clear all classes
     isAnswering = false;
     answerButtons.forEach(btn => {
         btn.disabled = false;
+        // Remove all classes and reset to base state
+        btn.classList.remove('correct', 'wrong');
         btn.className = 'answer-btn';
+        // Force a reflow to ensure styles are reset
+        void btn.offsetWidth;
     });
 }
 
