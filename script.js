@@ -6,7 +6,7 @@ let currentAnswer = 0;
 let isAnswering = false;
 let gameMode = null; // 'normal' or 'pairs'
 
-// DOM elements (initialized in init())
+// DOM elements (initialized after DOM loads)
 let equationEl;
 let currentStreakEl;
 let bestStreakEl;
@@ -20,9 +20,9 @@ let modalMessage;
 let menuScreen;
 let gameArea;
 let gameHeader;
-let modeIndicator;
-let backToMenuBtn;
-let modeButtons;
+let normalModeBtn;
+let pairsModeBtn;
+let backBtn;
 
 // Encouraging messages in Swedish
 const encouragingMessages = [
@@ -35,7 +35,7 @@ const encouragingMessages = [
 
 // Initialize game
 function init() {
-    // Initialize DOM elements
+    // Initialize all DOM elements
     equationEl = document.getElementById('equation');
     currentStreakEl = document.getElementById('currentStreak');
     bestStreakEl = document.getElementById('bestStreak');
@@ -49,94 +49,60 @@ function init() {
     menuScreen = document.getElementById('menuScreen');
     gameArea = document.getElementById('gameArea');
     gameHeader = document.getElementById('gameHeader');
-    modeIndicator = document.getElementById('modeIndicator');
-    backToMenuBtn = document.getElementById('backToMenuBtn');
-    modeButtons = document.querySelectorAll('.mode-btn');
+    normalModeBtn = document.getElementById('normalModeBtn');
+    pairsModeBtn = document.getElementById('pairsModeBtn');
+    backBtn = document.getElementById('backBtn');
 
-    // Show menu screen initially
-    showMenu();
-
-    // Add event listeners
+    // Add event listeners for answer buttons
     answerButtons.forEach(btn => {
         btn.addEventListener('click', handleAnswer);
     });
 
-    modeButtons.forEach(btn => {
-        btn.addEventListener('click', handleModeSelection);
-    });
+    // Add event listeners for menu buttons
+    normalModeBtn.addEventListener('click', () => startGame('normal'));
+    pairsModeBtn.addEventListener('click', () => startGame('pairs'));
 
+    // Add event listener for back button
+    backBtn.addEventListener('click', returnToMenu);
+
+    // Add event listener for restart button
     restartBtn.addEventListener('click', restartGame);
-    backToMenuBtn.addEventListener('click', handleBackToMenu);
-}
 
-// Load best streak from localStorage (mode-specific)
-function loadBestStreak() {
-    if (!gameMode) return;
-    const key = `bestStreak_${gameMode}`;
-    const saved = localStorage.getItem(key);
-    if (saved) {
-        bestStreak = parseInt(saved);
-    } else {
-        bestStreak = 0;
-    }
-}
-
-// Save best streak to localStorage (mode-specific)
-function saveBestStreak() {
-    if (!gameMode) return;
-    const key = `bestStreak_${gameMode}`;
-    localStorage.setItem(key, bestStreak);
+    // Show menu initially
+    showMenu();
 }
 
 // Show menu screen
 function showMenu() {
     menuScreen.classList.remove('hidden');
-    gameArea.classList.add('hidden');
     gameHeader.classList.add('hidden');
-    modeIndicator.classList.add('hidden');
+    gameArea.classList.add('hidden');
+    feedbackEl.classList.add('hidden');
     gameMode = null;
 }
 
-// Hide menu and show game
-function showGame() {
-    menuScreen.classList.add('hidden');
-    gameArea.classList.remove('hidden');
-    gameHeader.classList.remove('hidden');
-    modeIndicator.classList.remove('hidden');
-    updateModeIndicator();
-}
-
-// Update mode indicator
-function updateModeIndicator() {
-    if (gameMode === 'normal') {
-        modeIndicator.textContent = '➕➖ Vanlig räkning';
-        modeIndicator.className = 'mode-indicator normal-mode';
-    } else if (gameMode === 'pairs') {
-        modeIndicator.textContent = '🔟 10-kompisar';
-        modeIndicator.className = 'mode-indicator pairs-mode';
-    }
-}
-
-// Handle mode selection from menu
-function handleModeSelection(e) {
-    const selectedMode = e.currentTarget.dataset.mode;
-    gameMode = selectedMode;
-
-    // Reset game state
+// Start game with selected mode
+function startGame(mode) {
+    gameMode = mode;
     currentStreak = 0;
     strikes = 0;
 
-    // Load best streak for this mode
+    // Load best streak
     loadBestStreak();
 
-    // Show game and start
-    showGame();
+    // Show game, hide menu
+    menuScreen.classList.add('hidden');
+    gameHeader.classList.remove('hidden');
+    gameArea.classList.remove('hidden');
+    feedbackEl.classList.remove('hidden');
+
+    // Update display and generate first problem
     updateDisplay();
     generateNewProblem();
 }
 
-// Handle back to menu button
-function handleBackToMenu() {
+// Return to menu
+function returnToMenu() {
     if (isAnswering) return;
 
     // Ask for confirmation if game is in progress
@@ -149,16 +115,31 @@ function handleBackToMenu() {
     showMenu();
 }
 
+// Load best streak from localStorage
+function loadBestStreak() {
+    const saved = localStorage.getItem('bestStreak');
+    if (saved) {
+        bestStreak = parseInt(saved);
+    } else {
+        bestStreak = 0;
+    }
+}
+
+// Save best streak to localStorage
+function saveBestStreak() {
+    localStorage.setItem('bestStreak', bestStreak);
+}
+
 // Generate a random number within range
 function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Generate new math problem
+// Generate new math problem based on game mode
 function generateNewProblem() {
     if (gameMode === 'pairs') {
         generatePairsProblem();
-    } else if (gameMode === 'normal') {
+    } else {
         generateNormalProblem();
     }
 
@@ -366,15 +347,11 @@ function showGameOver() {
     gameOverModal.classList.remove('hidden');
 }
 
-// Restart game (in current mode)
+// Restart game
 function restartGame() {
     currentStreak = 0;
     strikes = 0;
     gameOverModal.classList.add('hidden');
-
-    // Reload best streak for current mode
-    loadBestStreak();
-
     updateDisplay();
     generateNewProblem();
 }

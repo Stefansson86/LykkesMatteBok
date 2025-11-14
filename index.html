@@ -11,19 +11,18 @@
         <!-- Banner -->
         <div class="banner">
             <h1 class="banner-title">📚 Lykkes Mattebok ✨</h1>
-            <div class="mode-indicator hidden" id="modeIndicator"></div>
         </div>
 
-        <!-- Menu screen -->
+        <!-- Menu screen (shown initially) -->
         <div class="menu-screen" id="menuScreen">
             <h2 class="menu-title">Välj spelläge</h2>
             <div class="menu-buttons">
-                <button class="mode-btn" data-mode="normal">
+                <button class="mode-btn" id="normalModeBtn">
                     <span class="mode-icon">➕➖</span>
                     <span class="mode-name">Vanlig räkning</span>
                     <span class="mode-desc">Öva addition och subtraktion</span>
                 </button>
-                <button class="mode-btn" data-mode="pairs">
+                <button class="mode-btn" id="pairsModeBtn">
                     <span class="mode-icon">🔟</span>
                     <span class="mode-name">10-kompisar</span>
                     <span class="mode-desc">Hitta siffror som blir 10</span>
@@ -31,9 +30,9 @@
             </div>
         </div>
 
-        <!-- Header with stats -->
+        <!-- Header with stats (hidden initially) -->
         <div class="header hidden" id="gameHeader">
-            <button class="back-to-menu-btn" id="backToMenuBtn" title="Tillbaka till meny">🏠</button>
+            <button class="back-btn" id="backBtn">🏠 Meny</button>
             <div class="stats">
                 <div class="streak-display">
                     <span class="label">Rad:</span>
@@ -53,7 +52,7 @@
             </div>
         </div>
 
-        <!-- Main game area -->
+        <!-- Main game area (hidden initially) -->
         <div class="game-area hidden" id="gameArea">
             <!-- Question box -->
             <div class="question-box">
@@ -69,8 +68,8 @@
             </div>
         </div>
 
-        <!-- Feedback message -->
-        <div class="feedback" id="feedback"></div>
+        <!-- Feedback message (hidden initially) -->
+        <div class="feedback hidden" id="feedback"></div>
 
         <!-- Game over modal -->
         <div class="modal hidden" id="gameOverModal">
