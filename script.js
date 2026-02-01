@@ -1,23 +1,46 @@
 // Game state
-let currentStreak = 0;
-let bestStreak = 0;
-let strikes = 0;
-let currentAnswer = 0;
-let isAnswering = false;
+const GameMode = {
+    MENU: 'MENU',
+    MATH: 'MATH',
+    CLOCK: 'CLOCK'
+};
 
-// DOM elements
-const equationEl = document.getElementById('equation');
-const currentStreakEl = document.getElementById('currentStreak');
-const bestStreakEl = document.getElementById('bestStreak');
-const livesEl = document.getElementById('lives');
-const feedbackEl = document.getElementById('feedback');
-const answerButtons = document.querySelectorAll('.answer-btn');
-const gameOverModal = document.getElementById('gameOverModal');
-const finalStreakEl = document.getElementById('finalStreak');
-const restartBtn = document.getElementById('restartBtn');
-const modalMessage = document.getElementById('modalMessage');
+let currentState = {
+    mode: GameMode.MENU,
+    lives: 3,
+    strikes: 0,
+    currentStreak: 0,
+    // Best streaks stored separately
+    bestStreakMath: parseInt(localStorage.getItem('bestStreak_math') || '0'),
+    bestStreakClock: parseInt(localStorage.getItem('bestStreak_clock') || '0')
+};
 
-// Encouraging messages in Swedish
+// DOM Elements
+const elements = {
+    menu: document.getElementById('main-menu'),
+    header: document.getElementById('gameHeader'),
+    mathGame: document.getElementById('math-game'),
+    clockGame: document.getElementById('clock-game'),
+    lives: document.getElementById('lives'),
+    currentStreak: document.getElementById('currentStreak'),
+    bestStreak: document.getElementById('bestStreak'),
+    feedback: document.getElementById('feedback'),
+    modal: document.getElementById('gameOverModal'),
+    modalMessage: document.getElementById('modalMessage'),
+    restartBtn: document.getElementById('restartBtn'),
+    menuBtn: document.getElementById('menuBtn'),
+    backBtn: document.getElementById('backBtn'),
+    // Math specific
+    equation: document.getElementById('equation'),
+    mathAnswers: document.getElementById('mathAnswers'),
+    // Clock specific
+    clockDisplay: document.getElementById('clockDisplay'),
+    clockAnswers: document.getElementById('clockAnswers'),
+    hourHand: document.getElementById('hourHand'),
+    minuteHand: document.getElementById('minuteHand')
+};
+
+// Encouraging messages
 const encouragingMessages = [
     "Bra jobbat! Fortsätt så här! 🌟",
     "Du är jätteduktig! Kör hårt! 💪",
@@ -26,196 +49,70 @@ const encouragingMessages = [
     "Underbart! Fortsätt öva! 🌈"
 ];
 
-// Initialize game
+// --- Game Logic Base ---
+
 function init() {
-    loadBestStreak();
-    updateDisplay();
-    generateNewProblem();
-
-    // Add event listeners
-    answerButtons.forEach(btn => {
-        btn.addEventListener('click', handleAnswer);
-    });
-
-    restartBtn.addEventListener('click', restartGame);
+    setupEventListeners();
+    showMenu();
 }
 
-// Load best streak from localStorage
-function loadBestStreak() {
-    const saved = localStorage.getItem('bestStreak');
-    if (saved) {
-        bestStreak = parseInt(saved);
-    }
-}
-
-// Save best streak to localStorage
-function saveBestStreak() {
-    localStorage.setItem('bestStreak', bestStreak);
-}
-
-// Generate a random number within range
-function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Generate new math problem
-function generateNewProblem() {
-    const num1 = randomNumber(1, 10);
-    const num2 = randomNumber(1, 10);
-    const isAddition = Math.random() < 0.5;
-
-    let equation, answer;
-
-    if (isAddition) {
-        equation = `${num1} + ${num2}`;
-        answer = num1 + num2;
-    } else {
-        // For subtraction, ensure result is positive
-        const larger = Math.max(num1, num2);
-        const smaller = Math.min(num1, num2);
-        equation = `${larger} - ${smaller}`;
-        answer = larger - smaller;
-    }
-
-    currentAnswer = answer;
-    equationEl.textContent = equation;
-
-    // Generate answer options
-    generateAnswerOptions(answer);
-
-    // Clear feedback
-    feedbackEl.textContent = '';
-    feedbackEl.className = 'feedback';
-
-    // Re-enable buttons
-    isAnswering = false;
-    answerButtons.forEach(btn => {
-        btn.disabled = false;
-        btn.className = 'answer-btn';
+function setupEventListeners() {
+    document.getElementById('startMathBtn').addEventListener('click', () => startGame(GameMode.MATH));
+    document.getElementById('startClockBtn').addEventListener('click', () => startGame(GameMode.CLOCK));
+    elements.backBtn.addEventListener('click', showMenu);
+    elements.restartBtn.addEventListener('click', restartGame);
+    elements.menuBtn.addEventListener('click', () => {
+        elements.modal.classList.add('hidden');
+        showMenu();
     });
 }
 
-// Generate 4 answer options (1 correct, 3 wrong)
-function generateAnswerOptions(correctAnswer) {
-    const answers = [correctAnswer];
-
-    // Generate 3 unique wrong answers
-    while (answers.length < 4) {
-        // Generate wrong answers within reasonable range
-        let wrongAnswer;
-        const offset = randomNumber(1, 5);
-
-        if (Math.random() < 0.5) {
-            wrongAnswer = correctAnswer + offset;
-        } else {
-            wrongAnswer = correctAnswer - offset;
-        }
-
-        // Ensure answer is positive and unique
-        if (wrongAnswer > 0 && wrongAnswer <= 20 && !answers.includes(wrongAnswer)) {
-            answers.push(wrongAnswer);
-        }
-    }
-
-    // Shuffle answers
-    shuffleArray(answers);
-
-    // Set button values
-    answerButtons.forEach((btn, index) => {
-        btn.textContent = answers[index];
-        btn.dataset.answer = answers[index];
-    });
+function showMenu() {
+    currentState.mode = GameMode.MENU;
+    elements.menu.classList.remove('hidden');
+    elements.header.classList.add('hidden');
+    elements.mathGame.classList.add('hidden');
+    elements.clockGame.classList.add('hidden');
+    elements.feedback.textContent = '';
+    elements.modal.classList.add('hidden');
 }
 
-// Shuffle array (Fisher-Yates algorithm)
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+function startGame(mode) {
+    currentState.mode = mode;
+    currentState.lives = 3;
+    currentState.strikes = 0;
+    currentState.currentStreak = 0;
+
+    // Show/Hide containers
+    elements.menu.classList.add('hidden');
+    elements.header.classList.remove('hidden');
+
+    if (mode === GameMode.MATH) {
+        elements.mathGame.classList.remove('hidden');
+        elements.clockGame.classList.add('hidden');
+        updateBestStreakDisplay(currentState.bestStreakMath);
+        generateMathProblem();
+    } else if (mode === GameMode.CLOCK) {
+        elements.mathGame.classList.add('hidden');
+        elements.clockGame.classList.remove('hidden');
+        updateBestStreakDisplay(currentState.bestStreakClock);
+        generateClockProblem();
     }
-}
-
-// Handle answer selection
-function handleAnswer(e) {
-    if (isAnswering) return;
-
-    isAnswering = true;
-    const selectedAnswer = parseInt(e.target.dataset.answer);
-    const isCorrect = selectedAnswer === currentAnswer;
-
-    // Disable all buttons
-    answerButtons.forEach(btn => btn.disabled = true);
-
-    if (isCorrect) {
-        handleCorrectAnswer(e.target);
-    } else {
-        handleWrongAnswer(e.target);
-    }
-}
-
-// Handle correct answer
-function handleCorrectAnswer(button) {
-    button.classList.add('correct');
-    currentStreak++;
-
-    // Update best streak if needed
-    if (currentStreak > bestStreak) {
-        bestStreak = currentStreak;
-        saveBestStreak();
-    }
-
-    // Show positive feedback
-    const messages = ['Rätt! 🎉', 'Jättebra! ⭐', 'Perfekt! 🌟', 'Härligt! 🎈'];
-    feedbackEl.textContent = messages[randomNumber(0, messages.length - 1)];
-    feedbackEl.className = 'feedback correct';
 
     updateDisplay();
-
-    // Generate next problem after delay
-    setTimeout(() => {
-        generateNewProblem();
-    }, 1500);
 }
 
-// Handle wrong answer
-function handleWrongAnswer(button) {
-    button.classList.add('wrong');
-    strikes++;
-
-    // Show correct answer
-    answerButtons.forEach(btn => {
-        if (parseInt(btn.dataset.answer) === currentAnswer) {
-            btn.classList.add('correct');
-        }
-    });
-
-    feedbackEl.textContent = `Rätt svar är ${currentAnswer}`;
-    feedbackEl.className = 'feedback wrong';
-
-    updateDisplay();
-
-    // Check for game over
-    if (strikes >= 3) {
-        setTimeout(() => {
-            showGameOver();
-        }, 2000);
-    } else {
-        // Continue with next problem
-        setTimeout(() => {
-            generateNewProblem();
-        }, 2000);
-    }
+function updateBestStreakDisplay(value) {
+    elements.bestStreak.textContent = value;
 }
 
-// Update display (streak, best streak, lives)
 function updateDisplay() {
-    currentStreakEl.textContent = currentStreak;
-    bestStreakEl.textContent = bestStreak;
+    elements.currentStreak.textContent = currentState.currentStreak;
 
     // Update hearts
-    const hearts = livesEl.querySelectorAll('.heart');
+    const hearts = elements.lives.querySelectorAll('.heart');
     hearts.forEach((heart, index) => {
-        if (index < strikes) {
+        if (index < currentState.strikes) {
             heart.classList.add('lost');
         } else {
             heart.classList.remove('lost');
@@ -223,36 +120,271 @@ function updateDisplay() {
     });
 }
 
-// Show game over modal
-function showGameOver() {
-    finalStreakEl.textContent = currentStreak;
+function handleAnswer(selectedAnswer, correctAnswer, correctCallback, wrongCallback) {
+    const isCorrect = selectedAnswer === correctAnswer;
 
-    // Set encouraging message based on streak
+    // Disable buttons temporarily managed by game specific functions
+
+    if (isCorrect) {
+        currentState.currentStreak++;
+        updateBestStreak();
+        showFeedback(true);
+        updateDisplay();
+        setTimeout(correctCallback, 1500);
+    } else {
+        currentState.strikes++;
+        updateDisplay();
+
+        if (currentState.strikes >= 3) {
+            showFeedback(false, correctAnswer);
+            setTimeout(showGameOver, 2000);
+        } else {
+            showFeedback(false, correctAnswer);
+            // Optionally delay next problem or just let them retry? 
+            // Original game showed feedback then refreshed.
+            // Let's stick to "Next Problem" after wrong answer too, but allow seeing the right one.
+            setTimeout(wrongCallback, 2000);
+        }
+    }
+}
+
+function updateBestStreak() {
+    if (currentState.mode === GameMode.MATH) {
+        if (currentState.currentStreak > currentState.bestStreakMath) {
+            currentState.bestStreakMath = currentState.currentStreak;
+            localStorage.setItem('bestStreak_math', currentState.bestStreakMath);
+            updateBestStreakDisplay(currentState.bestStreakMath);
+        }
+    } else {
+        if (currentState.currentStreak > currentState.bestStreakClock) {
+            currentState.bestStreakClock = currentState.currentStreak;
+            localStorage.setItem('bestStreak_clock', currentState.bestStreakClock);
+            updateBestStreakDisplay(currentState.bestStreakClock);
+        }
+    }
+}
+
+function showFeedback(isCorrect, correctAnswerText) {
+    if (isCorrect) {
+        const messages = ['Rätt! 🎉', 'Jättebra! ⭐', 'Perfekt! 🌟', 'Härligt! 🎈'];
+        elements.feedback.textContent = messages[Math.floor(Math.random() * messages.length)];
+        elements.feedback.className = 'feedback correct';
+    } else {
+        elements.feedback.textContent = `Rätt svar var ${correctAnswerText}`;
+        elements.feedback.className = 'feedback wrong';
+    }
+}
+
+function showGameOver() {
+    elements.modal.classList.remove('hidden');
+    elements.modalMessage.innerHTML = `Du klarade en rad på <span id="finalStreak">${currentState.currentStreak}</span>!`;
+
     let message = '';
-    if (currentStreak === 0) {
+    if (currentState.currentStreak === 0) {
         message = 'Ingen fara! Det tar lite tid att komma igång. 🌱';
-    } else if (currentStreak < 5) {
+    } else if (currentState.currentStreak < 5) {
         message = 'Bra början! Fortsätt öva så blir du ännu bättre! 🌟';
-    } else if (currentStreak < 10) {
+    } else if (currentState.currentStreak < 10) {
         message = 'Jättebra! Du håller på att bli riktigt duktig! 🎈';
     } else {
         message = 'Fantastiskt! Du är en riktig mattechampion! 🏆';
     }
-
-    modalMessage.innerHTML = `Du klarade en rad på <span id="finalStreak">${currentStreak}</span>!`;
     document.querySelector('.encouragement').textContent = message;
-
-    gameOverModal.classList.remove('hidden');
 }
 
-// Restart game
 function restartGame() {
-    currentStreak = 0;
-    strikes = 0;
-    gameOverModal.classList.add('hidden');
-    updateDisplay();
-    generateNewProblem();
+    elements.modal.classList.add('hidden');
+    startGame(currentState.mode);
 }
 
-// Initialize game when page loads
+// --- Math Game Logic ---
+
+function generateMathProblem() {
+    elements.feedback.textContent = '';
+
+    // Determine operation first
+    const isAddition = Math.random() < 0.5;
+
+    let answer, equationText;
+
+    if (isAddition) {
+        // Highest possible answer for is 20
+        // We pick the answer first to ensure we cover the full range (2-20)
+        answer = randomNumber(2, 20);
+
+        // Decompose into two numbers
+        // Ensure num1 is at least 1 and at most answer-1 (so num2 is also at least 1)
+        const num1 = randomNumber(1, answer - 1);
+        const num2 = answer - num1;
+
+        equationText = `${num1} + ${num2}`;
+    } else {
+        // Highest possible Term is 20 for subtraction
+        const num1 = randomNumber(1, 20);
+        const num2 = randomNumber(1, 20);
+
+        const larger = Math.max(num1, num2);
+        const smaller = Math.min(num1, num2);
+
+        answer = larger - smaller;
+        equationText = `${larger} - ${smaller}`;
+    }
+
+    elements.equation.textContent = equationText;
+    setupMathButtons(answer);
+}
+
+function setupMathButtons(correctAnswer) {
+    const answers = [correctAnswer];
+    while (answers.length < 4) {
+        const offset = randomNumber(1, 5);
+        const wrong = Math.random() < 0.5 ? correctAnswer + offset : correctAnswer - offset;
+        if (wrong >= 0 && !answers.includes(wrong)) {
+            answers.push(wrong);
+        }
+    }
+    shuffleArray(answers);
+
+    const buttons = elements.mathAnswers.querySelectorAll('.answer-btn');
+    buttons.forEach((btn, index) => {
+        btn.textContent = answers[index];
+        btn.disabled = false;
+        btn.className = 'answer-btn';
+
+        // Clone to remove old listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener('click', (e) => {
+            // Disable all buttons
+            elements.mathAnswers.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
+
+            if (answers[index] === correctAnswer) {
+                newBtn.classList.add('correct');
+                handleAnswer(answers[index], correctAnswer, generateMathProblem, generateMathProblem);
+            } else {
+                newBtn.classList.add('wrong');
+                // Highlight correct
+                elements.mathAnswers.querySelectorAll('.answer-btn').forEach((b, i) => {
+                    if (answers[i] === correctAnswer) b.classList.add('correct');
+                });
+                handleAnswer(answers[index], correctAnswer, generateMathProblem, generateMathProblem);
+            }
+        });
+    });
+}
+
+// --- Clock Game Logic ---
+
+function generateClockProblem() {
+    elements.feedback.textContent = '';
+
+    // Generate time (hours 0-23, minutes 0, 15, 30, 45)
+    // To make it kid friendly, let's stick to 12h format for answers perhaps? 
+    // Or 24h? Valid question. In Sweden we use 24h digital usually, but "klockan 2" is ambiguous.
+    // Let's generate 0-23 for internal, but maybe display answers as 00:00 - 23:59
+
+    const hour = randomNumber(0, 23);
+    const minute = [0, 15, 30, 45][randomNumber(0, 3)];
+
+    renderClock(hour, minute);
+    setupClockButtons(hour, minute);
+}
+
+function renderClock(hour, minute) {
+    // Hour hand moves slightly based on minutes
+    // 12 hours = 360 degrees => 1 hour = 30 degrees
+    // 60 minutes = 30 degrees (hour hand movement) => 1 minute = 0.5 degrees
+    const hourDegrees = ((hour % 12) * 30) + (minute * 0.5);
+    const minuteDegrees = minute * 6;
+
+    elements.hourHand.setAttribute('transform', `rotate(${hourDegrees}, 100, 100)`);
+    elements.minuteHand.setAttribute('transform', `rotate(${minuteDegrees}, 100, 100)`);
+}
+
+function setupClockButtons(correctHour, correctMinute) {
+    const timeToSwedish = (h, m) => {
+        // Convert to 12-hour format for the number
+        let displayHour = h % 12;
+        if (displayHour === 0) displayHour = 12;
+
+        // For half and quarter to, we refer to the NEXT hour
+        let nextHour = (h + 1) % 12;
+        if (nextHour === 0) nextHour = 12;
+
+        switch (m) {
+            case 0:
+                return `klockan ${displayHour}`;
+            case 15:
+                return `kvart över ${displayHour}`;
+            case 30:
+                return `halv ${nextHour}`;
+            case 45:
+                return `kvart i ${nextHour}`;
+            default:
+                return `${h}:${m}`;
+        }
+    };
+
+    // Store exact correct values to check against, but display text
+    const correctString = timeToSwedish(correctHour, correctMinute);
+    const answers = [correctString];
+
+    while (answers.length < 4) {
+        // Generate wrong answers
+        let h = randomNumber(0, 23); // Keep using 24h internal logic for generation
+        let m = [0, 15, 30, 45][randomNumber(0, 3)];
+
+        const wrongString = timeToSwedish(h, m);
+
+        // Ensure unique text representation
+        if (!answers.includes(wrongString)) {
+            answers.push(wrongString);
+        }
+    }
+
+    shuffleArray(answers);
+
+    const buttons = elements.clockAnswers.querySelectorAll('.answer-btn');
+    buttons.forEach((btn, index) => {
+        btn.textContent = answers[index];
+        btn.disabled = false;
+        btn.className = 'answer-btn';
+        // Adjust font size for text
+        btn.style.fontSize = '1.5em';
+
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener('click', () => {
+            elements.clockAnswers.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
+
+            if (answers[index] === correctString) {
+                newBtn.classList.add('correct');
+                handleAnswer(answers[index], correctString, generateClockProblem, generateClockProblem);
+            } else {
+                newBtn.classList.add('wrong');
+                elements.clockAnswers.querySelectorAll('.answer-btn').forEach((b, i) => {
+                    if (answers[i] === correctString) b.classList.add('correct');
+                });
+                handleAnswer(answers[index], correctString, generateClockProblem, generateClockProblem);
+            }
+        });
+    });
+}
+
+// --- Utils ---
+
+function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// Start
 window.addEventListener('DOMContentLoaded', init);

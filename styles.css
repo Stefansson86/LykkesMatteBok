@@ -14,6 +14,14 @@ body {
     padding: 20px;
 }
 
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
 .container {
     width: 100%;
     max-width: 600px;
@@ -40,6 +48,71 @@ body {
     color: #6c5ce7;
     margin: 0;
     letter-spacing: 1px;
+}
+
+/* Menu */
+.menu-area {
+    text-align: center;
+    padding: 20px;
+}
+
+.menu-area h2 {
+    color: #2d3436;
+    font-size: 1.8em;
+    margin-bottom: 30px;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.menu-btn {
+    background: #6c5ce7;
+    border: none;
+    border-radius: 20px;
+    padding: 20px 40px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.menu-btn .icon {
+    font-size: 1.2em;
+}
+
+.menu-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background: #5f4dd6;
+}
+
+.back-btn {
+    background: transparent;
+    border: 2px solid #74b9ff;
+    padding: 5px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    color: #2d3436;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    background: #e8f4fd;
 }
 
 /* Header stats */
@@ -274,6 +347,25 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     background: #5f4dd6;
+}
+
+.secondary {
+    background: #a29bfe;
+    border-color: #6c5ce7;
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+}
+
+.secondary:hover {
+    background: #9089ef;
+}
+
+/* Clock Display */
+.clock-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Responsive design */

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="sv">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lykkes Mattebok</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="container">
         <!-- Banner -->
@@ -13,9 +15,25 @@
             <h1 class="banner-title">📚 Lykkes Mattebok ✨</h1>
         </div>
 
-        <!-- Header with stats -->
-        <div class="header">
+        <!-- Main Menu -->
+        <div id="main-menu" class="menu-area">
+            <h2>Vad vill du spela?</h2>
+            <div class="menu-buttons">
+                <button class="menu-btn" id="startMathBtn">
+                    <span class="icon">➕</span>
+                    <span class="text">Räkna</span>
+                </button>
+                <button class="menu-btn" id="startClockBtn">
+                    <span class="icon">🕒</span>
+                    <span class="text">Klockan</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Header with stats (Shared) -->
+        <div class="header hidden" id="gameHeader">
             <div class="stats">
+                <button id="backBtn" class="back-btn">⬅️ Meny</button>
                 <div class="streak-display">
                     <span class="label">Rad:</span>
                     <span class="streak-value" id="currentStreak">0</span>
@@ -34,19 +52,51 @@
             </div>
         </div>
 
-        <!-- Main game area -->
-        <div class="game-area">
+        <!-- Math Game Area -->
+        <div id="math-game" class="game-area hidden">
             <!-- Question box -->
             <div class="question-box">
                 <div class="equation" id="equation">3 + 3</div>
             </div>
 
             <!-- Answer grid (2x2) -->
-            <div class="answer-grid">
+            <div class="answer-grid" id="mathAnswers">
                 <button class="answer-btn" data-answer="0">6</button>
                 <button class="answer-btn" data-answer="1">8</button>
                 <button class="answer-btn" data-answer="2">5</button>
                 <button class="answer-btn" data-answer="3">7</button>
+            </div>
+        </div>
+
+        <!-- Clock Game Area -->
+        <div id="clock-game" class="game-area hidden">
+            <!-- Clock display -->
+            <div class="question-box">
+                <div class="clock-display" id="clockDisplay">
+                    <!-- SVG Clock will be injected here -->
+                    <svg viewBox="0 0 200 200" width="200" height="200">
+                        <circle cx="100" cy="100" r="95" stroke="black" stroke-width="4" fill="white" />
+                        <!-- Hour marks -->
+                        <line x1="100" y1="10" x2="100" y2="25" stroke="black" stroke-width="4" />
+                        <line x1="100" y1="190" x2="100" y2="175" stroke="black" stroke-width="4" />
+                        <line x1="10" y1="100" x2="25" y2="100" stroke="black" stroke-width="4" />
+                        <line x1="190" y1="100" x2="175" y2="100" stroke="black" stroke-width="4" />
+                        <!-- Hands -->
+                        <line id="hourHand" x1="100" y1="100" x2="100" y2="60" stroke="black" stroke-width="6"
+                            stroke-linecap="round" />
+                        <line id="minuteHand" x1="100" y1="100" x2="100" y2="40" stroke="black" stroke-width="4"
+                            stroke-linecap="round" />
+                        <circle cx="100" cy="100" r="5" fill="black" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Answer grid (2x2) for Clock -->
+            <div class="answer-grid" id="clockAnswers">
+                <button class="answer-btn" data-answer="00:00">00:00</button>
+                <button class="answer-btn" data-answer="00:00">00:00</button>
+                <button class="answer-btn" data-answer="00:00">00:00</button>
+                <button class="answer-btn" data-answer="00:00">00:00</button>
             </div>
         </div>
 
@@ -60,10 +110,12 @@
                 <p class="modal-message" id="modalMessage">Du klarade en rad på <span id="finalStreak">0</span>!</p>
                 <p class="encouragement">Fortsätt öva så blir du jättebra på matte! 💪</p>
                 <button class="restart-btn" id="restartBtn">Försök igen!</button>
+                <button class="restart-btn secondary" id="menuBtn">Till menyn</button>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
+
 </html>
