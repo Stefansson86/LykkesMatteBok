@@ -10,13 +10,13 @@
 
 <body>
     <div class="container">
-        <!-- Banner -->
-        <div class="banner">
-            <h1 class="banner-title">📚 Lykkes Mattebok ✨</h1>
-        </div>
-
         <!-- Main Menu -->
         <div id="main-menu" class="menu-area">
+            <div class="logo-area">
+                <span class="logo-icon">🦄</span>
+                <h1 class="logo-title">Lykkes<br>Mattebok</h1>
+                <span class="logo-stars">✨ ⭐ ✨</span>
+            </div>
             <h2>Vad vill du spela?</h2>
             <div class="menu-buttons">
                 <button class="menu-btn" id="startMathBtn">
@@ -32,19 +32,14 @@
 
         <!-- Header with stats (Shared) -->
         <div class="header hidden" id="gameHeader">
+            <button id="backBtn" class="back-btn">✕</button>
             <div class="stats">
-                <button id="backBtn" class="back-btn">⬅️ Meny</button>
                 <div class="streak-display">
-                    <span class="label">Rad:</span>
                     <span class="streak-value" id="currentStreak">0</span>
                     <span class="star">⭐</span>
                 </div>
-                <div class="best-streak-display">
-                    <span class="label">Bästa:</span>
-                    <span class="best-streak-value" id="bestStreak">0</span>
-                    <span class="trophy">🏆</span>
-                </div>
             </div>
+            <!-- Settings/Lives placeholder if needed, or just simplified -->
             <div class="lives" id="lives">
                 <span class="heart">❤️</span>
                 <span class="heart">❤️</span>
@@ -56,6 +51,7 @@
         <div id="math-game" class="game-area hidden">
             <!-- Question box -->
             <div class="question-box">
+                <div class="question-label">Vad är summan?</div>
                 <div class="equation" id="equation">3 + 3</div>
             </div>
 
@@ -72,6 +68,7 @@
         <div id="clock-game" class="game-area hidden">
             <!-- Clock display -->
             <div class="question-box">
+                <div class="question-label">Vad är klockan?</div>
                 <div class="clock-display" id="clockDisplay">
                     <!-- SVG Clock will be injected here -->
                     <svg viewBox="0 0 200 200" width="200" height="200">

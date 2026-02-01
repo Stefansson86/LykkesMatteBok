@@ -23,7 +23,6 @@ const elements = {
     clockGame: document.getElementById('clock-game'),
     lives: document.getElementById('lives'),
     currentStreak: document.getElementById('currentStreak'),
-    bestStreak: document.getElementById('bestStreak'),
     feedback: document.getElementById('feedback'),
     modal: document.getElementById('gameOverModal'),
     modalMessage: document.getElementById('modalMessage'),
@@ -33,6 +32,7 @@ const elements = {
     // Math specific
     equation: document.getElementById('equation'),
     mathAnswers: document.getElementById('mathAnswers'),
+    mathLabel: document.querySelector('#math-game .question-label'),
     // Clock specific
     clockDisplay: document.getElementById('clockDisplay'),
     clockAnswers: document.getElementById('clockAnswers'),
@@ -90,20 +90,14 @@ function startGame(mode) {
     if (mode === GameMode.MATH) {
         elements.mathGame.classList.remove('hidden');
         elements.clockGame.classList.add('hidden');
-        updateBestStreakDisplay(currentState.bestStreakMath);
         generateMathProblem();
     } else if (mode === GameMode.CLOCK) {
         elements.mathGame.classList.add('hidden');
         elements.clockGame.classList.remove('hidden');
-        updateBestStreakDisplay(currentState.bestStreakClock);
         generateClockProblem();
     }
 
     updateDisplay();
-}
-
-function updateBestStreakDisplay(value) {
-    elements.bestStreak.textContent = value;
 }
 
 function updateDisplay() {
@@ -153,13 +147,11 @@ function updateBestStreak() {
         if (currentState.currentStreak > currentState.bestStreakMath) {
             currentState.bestStreakMath = currentState.currentStreak;
             localStorage.setItem('bestStreak_math', currentState.bestStreakMath);
-            updateBestStreakDisplay(currentState.bestStreakMath);
         }
     } else {
         if (currentState.currentStreak > currentState.bestStreakClock) {
             currentState.bestStreakClock = currentState.currentStreak;
             localStorage.setItem('bestStreak_clock', currentState.bestStreakClock);
-            updateBestStreakDisplay(currentState.bestStreakClock);
         }
     }
 }
@@ -205,7 +197,7 @@ function generateMathProblem() {
     // Determine operation first
     const isAddition = Math.random() < 0.5;
 
-    let answer, equationText;
+    let answer, equationText, labelText;
 
     if (isAddition) {
         // Highest possible answer for is 20
@@ -218,6 +210,7 @@ function generateMathProblem() {
         const num2 = answer - num1;
 
         equationText = `${num1} + ${num2}`;
+        labelText = "VAD ÄR SUMMAN?";
     } else {
         // Highest possible Term is 20 for subtraction
         const num1 = randomNumber(1, 20);
@@ -228,9 +221,11 @@ function generateMathProblem() {
 
         answer = larger - smaller;
         equationText = `${larger} - ${smaller}`;
+        labelText = "VAD ÄR SKILLNADEN?";
     }
 
     elements.equation.textContent = equationText;
+    if (elements.mathLabel) elements.mathLabel.textContent = labelText;
     setupMathButtons(answer);
 }
 
