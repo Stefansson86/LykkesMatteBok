@@ -1,0 +1,7 @@
+{
+  "name": "Lykkes Mattebok",
+  "description": "En rolig och interaktiv mattespel för barn med räkning och klockövningar.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
