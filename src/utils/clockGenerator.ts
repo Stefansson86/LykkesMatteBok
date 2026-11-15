@@ -1,7 +1,41 @@
-import { ClockProblem } from '../types/game';
+import { ClockProblem, ClockStyle } from '../types/game';
 import { randomInt, shuffleArray } from './mathGenerator';
 
 const MINUTES = [0, 15, 30, 45];
+
+export function getTimeOfDayLabel(hour: number): string {
+  if (hour >= 5 && hour < 10) return '🌅 Morgon';
+  if (hour >= 10 && hour < 12) return '☀️ Förmiddag';
+  if (hour >= 12 && hour < 18) return '☀️ Eftermiddag';
+  if (hour >= 18 && hour < 22) return '🌆 Kväll';
+  return '🌙 Natt';
+}
+
+export function getClockHint(hour: number, minute: number, style: ClockStyle): string {
+  if (style === 'digital') {
+    if (hour === 0) {
+      return '00 på natten motsvarar 12. Titta sedan på minuterna!';
+    }
+    if (hour >= 13) {
+      return `På eftermiddagen/kvällen: ta bort 12 från ${hour} (${hour} − 12 = ${hour - 12}).`;
+    }
+    return `På förmiddagen är timmen samma som den digitala siffran (${hour}).`;
+  }
+
+  const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+  const nextHour = (displayHour % 12) + 1;
+
+  if (minute === 0) {
+    return `Långa rosa visaren pekar rakt upp på 12 (hel timme). Korta visaren pekar på ${displayHour}.`;
+  }
+  if (minute === 30) {
+    return `Långa rosa visaren pekar rakt ner på 6 (halv). Korta visaren är på väg mot ${nextHour}.`;
+  }
+  if (minute < 30) {
+    return `Långa rosa visaren är på högra sidan ("över" ${displayHour}).`;
+  }
+  return `Långa rosa visaren är på vänstra sidan ("i" ${nextHour}).`;
+}
 
 export function timeToSwedish(hour: number, minute: number): string {
   let displayHour = hour % 12;

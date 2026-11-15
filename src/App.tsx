@@ -4,6 +4,7 @@ import { MainMenu } from './components/MainMenu';
 import { GameHeader } from './components/GameHeader';
 import { MathGame } from './components/MathGame';
 import { ClockGame } from './components/ClockGame';
+import { SetClockGame } from './components/SetClockGame';
 import { GameOverModal } from './components/GameOverModal';
 
 const STORAGE_STREAKS_KEY = 'lykke_best_streaks_v2';
@@ -14,6 +15,7 @@ const DEFAULT_STREAKS: BestStreaks = {
   MULTIPLY: 0,
   MIX: 0,
   CLOCK: 0,
+  SET_CLOCK: 0,
 };
 
 function loadBestStreaks(): BestStreaks {
@@ -147,6 +149,14 @@ export function App() {
 
             {mode === 'CLOCK' ? (
               <ClockGame
+                key={roundId}
+                soundEnabled={soundEnabled}
+                streak={streak}
+                onCorrect={handleCorrect}
+                onWrong={handleWrong}
+              />
+            ) : mode === 'SET_CLOCK' ? (
+              <SetClockGame
                 key={roundId}
                 soundEnabled={soundEnabled}
                 streak={streak}

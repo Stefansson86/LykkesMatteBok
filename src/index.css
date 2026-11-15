@@ -780,3 +780,203 @@ button {
 .btn-secondary:hover {
   background: #e2e8f0;
 }
+
+/* PWA Install & 5-card Menu Grid */
+.menu-top-bar {
+  justify-content: space-between;
+}
+
+.install-chip {
+  background: #f3e8ff;
+  color: #6d28d9;
+  border: 1.5px dashed #c4b5fd;
+}
+
+.mode-card:last-child:nth-child(odd) {
+  grid-column: span 2;
+}
+
+/* Clock Style Toggle & Digital 24h Watch */
+.clock-style-toggle {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 4px;
+  border-radius: 14px;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.clock-style-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #6d28d9;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.clock-style-btn.is-active {
+  background: #7c3aed;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.25);
+}
+
+.digital-clock-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.digital-watch-frame {
+  background: #1e293b;
+  border: 5px solid #7c3aed;
+  border-radius: 24px;
+  padding: 18px 32px;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.22), inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.digital-time {
+  font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #5eead4;
+  text-shadow: 0 0 12px rgba(94, 234, 212, 0.4);
+}
+
+.time-of-day-pill {
+  background: rgba(255, 255, 255, 0.9);
+  color: #475569;
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 999px;
+}
+
+.clock-hint-box {
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 16px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #5b21b6;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Interactive Set Clock Mode */
+.clock-svg.is-interactive {
+  cursor: pointer;
+  touch-action: none;
+}
+
+.set-clock-target {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #5b21b6;
+  margin-bottom: 6px;
+}
+
+.set-clock-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.set-clock-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-tag {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  min-width: 82px;
+}
+
+.hour-tag {
+  color: #5b21b6;
+}
+
+.min-tag {
+  color: #be185d;
+}
+
+.step-btn {
+  border: none;
+  border-radius: 18px;
+  padding: 13px 10px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
+  transition: transform 0.12s ease;
+}
+
+.step-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.step-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.hour-btn {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.min-btn {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+.check-clock-btn {
+  width: 100%;
+  border: none;
+  border-radius: 20px;
+  padding: 15px;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #6d28d9;
+  transition: transform 0.12s ease;
+}
+
+.check-clock-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #6d28d9;
+}
+
+.check-clock-btn:disabled {
+  opacity: 0.8;
+  cursor: default;
+}
+
+.check-clock-btn.is-correct {
+  background: #22c55e;
+  box-shadow: 0 5px 0 #15803d;
+}
+
+.check-clock-btn.is-wrong {
+  background: #ef4444;
+  box-shadow: 0 5px 0 #b91c1c;
+}

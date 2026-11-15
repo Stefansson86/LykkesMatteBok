@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { ClockProblem, MascotMood } from '../types/game';
-import { generateClockProblem } from '../utils/clockGenerator';
+import { Lightbulb } from 'lucide-react';
+import { ClockProblem, ClockStyle, MascotMood } from '../types/game';
+import { generateClockProblem, getClockHint, getTimeOfDayLabel } from '../utils/clockGenerator';
 import { playCorrectSound, playMilestoneSound, playWrongSound } from '../utils/sound';
+import { ClockDial } from './ClockDial';
 import { Mascot } from './Mascot';
 
 interface ClockGameProps {
@@ -12,7 +14,7 @@ interface ClockGameProps {
   onWrong: () => boolean;
 }
 
-const CLOCK_NUMBERS = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+const CLOCK_STYLE_KEY = 'lykke_clock_style';
 
 export function ClockGame({
   soundEnabled,
@@ -20,8 +22,16 @@ export function ClockGame({
   onCorrect,
   onWrong,
 }: ClockGameProps) {
+  const [clockStyle, setClockStyle] = useState<ClockStyle>(() => {
+    try {
+      return localStorage.getItem(CLOCK_STYLE_KEY) === 'digital' ? 'digital' : 'analog';
+    } catch {
+      return 'analog';
+    }
+  });
   const [problem, setProblem] = useState<ClockProblem>(() => generateClockProblem());
   const [selected, setSelected] = useState<string | null>(null);
+  const [showHint, setShowHint] = useState(false);
   const [mood, setMood] = useState<MascotMood>('idle');
   const [mascotText, setMascotText] = useState<string>('Titta på visarna! Vad är klockan? 🕒');
   const timerRef = useRef<number | null>(null);
@@ -37,8 +47,36 @@ export function ClockGame({
   const loadNext = () => {
     setProblem(generateClockProblem());
     setSelected(null);
+    setShowHint(false);
     setMood('idle');
-    setMascotText('Ny tid! Vad visar klockan nu? 🕒');
+    setMascotText(
+      clockStyle === 'digital'
+        ? 'Ny tid på digitalklockan! Vad blir det? ⌚'
+        : 'Ny tid! Vad visar klockan nu? 🕒'
+    );
+  };
+
+  const handleStyleChange = (nextStyle: ClockStyle) => {
+    if (nextStyle === clockStyle) return;
+    if (timerRef.current !== null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    setClockStyle(nextStyle);
+    try {
+      localStorage.setItem(CLOCK_STYLE_KEY, nextStyle);
+    } catch {
+      // ignore storage errors
+    }
+    setProblem(generateClockProblem());
+    setSelected(null);
+    setShowHint(false);
+    setMood('idle');
+    setMascotText(
+      nextStyle === 'digital'
+        ? 'Digital 24h-klocka! Vad blir tiden på svenska? ⌚'
+        : 'Analog klocka! Titta på visarna! 🕒'
+    );
   };
 
   const handlePick = (option: string) => {
@@ -75,65 +113,59 @@ export function ClockGame({
     }
   };
 
-  const hourDegrees = (problem.hour % 12) * 30 + problem.minute * 0.5;
-  const minuteDegrees = problem.minute * 6;
+  const digitalTime = `${String(problem.hour).padStart(2, '0')}:${String(problem.minute).padStart(2, '0')}`;
 
   return (
     <div className="game-stage">
       <Mascot mood={mood} message={mascotText} />
 
       <div className="question-card op-clock">
-        <div className="question-label">VAD ÄR KLOCKAN?</div>
-        <div className="clock-wrap">
-          <svg viewBox="0 0 220 220" width="200" height="200" className="clock-svg">
-            <circle cx="110" cy="110" r="102" fill="#ffffff" stroke="#7c3aed" strokeWidth="7" />
-            <circle cx="110" cy="110" r="92" fill="#faf5ff" />
-
-            {CLOCK_NUMBERS.map((num, idx) => {
-              const angle = (idx * 30 - 90) * (Math.PI / 180);
-              const x = 110 + Math.cos(angle) * 76;
-              const y = 110 + Math.sin(angle) * 76;
-              return (
-                <text
-                  key={num}
-                  x={x}
-                  y={y}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  className="clock-number"
-                >
-                  {num}
-                </text>
-              );
-            })}
-
-            {/* Hour hand */}
-            <line
-              x1="110"
-              y1="110"
-              x2="110"
-              y2="62"
-              stroke="#1e293b"
-              strokeWidth="7"
-              strokeLinecap="round"
-              transform={`rotate(${hourDegrees}, 110, 110)`}
-            />
-
-            {/* Minute hand */}
-            <line
-              x1="110"
-              y1="110"
-              x2="110"
-              y2="40"
-              stroke="#ec4899"
-              strokeWidth="5"
-              strokeLinecap="round"
-              transform={`rotate(${minuteDegrees}, 110, 110)`}
-            />
-
-            <circle cx="110" cy="110" r="7" fill="#7c3aed" />
-          </svg>
+        <div className="clock-style-toggle" role="group" aria-label="Välj klocktyp">
+          <button
+            type="button"
+            className={`clock-style-btn ${clockStyle === 'analog' ? 'is-active' : ''}`}
+            onClick={() => handleStyleChange('analog')}
+          >
+            🕒 Analog
+          </button>
+          <button
+            type="button"
+            className={`clock-style-btn ${clockStyle === 'digital' ? 'is-active' : ''}`}
+            onClick={() => handleStyleChange('digital')}
+          >
+            ⌚ Digital 24h
+          </button>
         </div>
+
+        <div className="question-label">VAD ÄR KLOCKAN?</div>
+
+        <div className="clock-wrap">
+          {clockStyle === 'analog' ? (
+            <ClockDial hour={problem.hour} minute={problem.minute} />
+          ) : (
+            <div className="digital-clock-display">
+              <div className="digital-watch-frame">
+                <span className="digital-time">{digitalTime}</span>
+              </div>
+              <span className="time-of-day-pill">{getTimeOfDayLabel(problem.hour)}</span>
+            </div>
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="hint-toggle-btn"
+          onClick={() => setShowHint((prev) => !prev)}
+        >
+          <Lightbulb size={16} />
+          <span>{showHint ? 'Dölj ledtråd' : 'Visa ledtråd'}</span>
+        </button>
+
+        {showHint && (
+          <div className="clock-hint-box">
+            {getClockHint(problem.hour, problem.minute, clockStyle)}
+          </div>
+        )}
       </div>
 
       <div className="answer-grid">

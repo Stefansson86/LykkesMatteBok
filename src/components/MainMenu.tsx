@@ -1,5 +1,11 @@
-import { Volume2, VolumeX, Trophy } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Volume2, VolumeX, Trophy, Download } from 'lucide-react';
 import { BestStreaks, GameMode } from '../types/game';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 interface MainMenuProps {
   bestStreaks: BestStreaks;
@@ -44,9 +50,17 @@ const MODE_CARDS: Array<{
     mode: 'CLOCK',
     emoji: '🕒',
     title: 'Klockan',
-    subtitle: 'Hel, halv & kvart',
+    subtitle: 'Analog & Digital 24h',
     example: 'Vad är klockan?',
     themeClass: 'card-pink',
+  },
+  {
+    mode: 'SET_CLOCK',
+    emoji: '🕰️',
+    title: 'Ställ klockan',
+    subtitle: 'Vrid visarna rätt!',
+    example: 'Ställ in tiden',
+    themeClass: 'card-purple',
   },
 ];
 
@@ -56,9 +70,45 @@ export function MainMenu({
   onToggleSound,
   onSelectMode,
 }: MainMenuProps) {
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+
+  useEffect(() => {
+    const onBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as BeforeInstallPromptEvent);
+    };
+    const onInstalled = () => setInstallPrompt(null);
+
+    window.addEventListener('beforeinstallprompt', onBeforeInstall);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstall);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    await installPrompt.userChoice;
+    setInstallPrompt(null);
+  };
+
   return (
     <div className="menu-screen">
       <div className="menu-top-bar">
+        {installPrompt ? (
+          <button
+            type="button"
+            className="sound-chip install-chip"
+            onClick={handleInstall}
+          >
+            <Download size={16} />
+            <span>Installera app</span>
+          </button>
+        ) : (
+          <span />
+        )}
         <button
           type="button"
           className="sound-chip"

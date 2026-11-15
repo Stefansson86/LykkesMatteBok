@@ -15,6 +15,7 @@ const MODE_TITLES: Record<Exclude<GameMode, 'MENU'>, string> = {
   MULTIPLY: 'Enkel Gånger',
   MIX: 'Matte-Mix',
   CLOCK: 'Klockan',
+  SET_CLOCK: 'Ställ klockan',
 };
 
 export function GameHeader({

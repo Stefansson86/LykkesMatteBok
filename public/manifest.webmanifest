@@ -1,0 +1,20 @@
+{
+  "name": "Lykkes Mattebok",
+  "short_name": "Mattebok",
+  "description": "Rolig och lärorik matte- och klockträning för barn på svenska.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf5ff",
+  "theme_color": "#7c3aed",
+  "lang": "sv",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

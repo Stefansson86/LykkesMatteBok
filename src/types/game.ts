@@ -1,4 +1,6 @@
-export type GameMode = 'MENU' | 'TEN_CROSSING' | 'MULTIPLY' | 'MIX' | 'CLOCK';
+export type GameMode = 'MENU' | 'TEN_CROSSING' | 'MULTIPLY' | 'MIX' | 'CLOCK' | 'SET_CLOCK';
+
+export type ClockStyle = 'analog' | 'digital';
 
 export type MathOperation = 'ADD' | 'SUB' | 'MUL';
 
