@@ -159,6 +159,56 @@ body {
     }
 }
 
+/* Difficulty Selector */
+.difficulty-section {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.difficulty-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #90a4ae;
+    margin-bottom: 8px;
+}
+
+.difficulty-pills {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    background: #f5f5f5;
+    padding: 5px;
+    border-radius: 18px;
+}
+
+.diff-btn {
+    border: none;
+    background: transparent;
+    padding: 10px 8px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #607d8b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.diff-btn.active {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 3px 8px rgba(156, 39, 176, 0.25);
+}
+
+.difficulty-desc {
+    font-size: 0.85rem;
+    color: #78909c;
+    margin-top: 8px;
+}
+
 /* Menu Styling */
 .menu-area {
     flex: 1;
@@ -169,34 +219,87 @@ body {
 }
 
 .menu-area h2 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: #455a64;
-    margin-bottom: 40px;
+    margin-bottom: 18px;
     font-weight: 700;
 }
 
 .menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     width: 100%;
 }
 
 .menu-btn {
     background: white;
     border: 2px solid #eee;
-    padding: 24px;
+    padding: 16px 14px;
     border-radius: var(--radius);
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: #546e7a;
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    text-align: center;
+    gap: 8px;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.menu-btn:last-child:nth-child(odd) {
+    grid-column: span 2;
+    flex-direction: row;
+    gap: 14px;
+}
+
+.menu-btn .icon {
+    font-size: 1.7rem;
+}
+
+.menu-btn-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.menu-btn:last-child:nth-child(odd) .menu-btn-info {
+    align-items: flex-start;
+}
+
+.best-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    background: #f3e5f5;
+    padding: 2px 10px;
+    border-radius: 999px;
+}
+
+.install-btn {
+    margin-top: 20px;
+    background: #f3e5f5;
+    color: var(--accent-color);
+    border: 2px dashed #ce93d8;
+    padding: 12px 20px;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.install-btn:hover {
+    transform: translateY(-2px);
+    background: #e1bee7;
 }
 
 .menu-btn:hover {
@@ -330,29 +433,332 @@ body {
     margin-left: 5px;
 }
 
+/* Question Tools & Hints */
+.question-tools {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    gap: 8px;
+}
+
+.tool-btn {
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s, background-color 0.15s;
+}
+
+.tool-btn:hover {
+    transform: scale(1.08);
+    background: white;
+}
+
+.hint-box {
+    margin-top: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 16px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #4a148c;
+    text-align: center;
+    max-width: 100%;
+    line-height: 1.4;
+}
+
+.hint-dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 1.15rem;
+}
+
+.hint-dot.crossed {
+    opacity: 0.35;
+    text-decoration: line-through;
+}
+
+.level-pill {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #f3e5f5;
+    color: var(--accent-color);
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+.heart {
+    display: inline-block;
+    transition: opacity 0.3s, transform 0.3s, filter 0.3s;
+}
+
+.heart.lost {
+    opacity: 0.25;
+    filter: grayscale(1);
+    transform: scale(0.85);
+}
+
+.feedback {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    min-height: 1.8em;
+    margin-top: 4px;
+}
+
+.feedback.correct {
+    color: #2e7d32;
+}
+
+.feedback.wrong {
+    color: #c62828;
+}
+
 /* Clock SVG Styling */
-.clock-display circle {
+.clock-display .clock-face {
     fill: white;
-    stroke: none;
+    stroke: #e1bee7;
+    stroke-width: 4;
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.05));
+}
+
+.clock-display .clock-center {
+    fill: #4a148c;
+}
+
+.clock-display .clock-tick {
+    stroke: #cfd8dc;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+}
+
+.clock-display .clock-tick.hour {
+    stroke: #90a4ae;
+    stroke-width: 2.5;
+}
+
+.clock-display .clock-tick.major {
+    stroke: #4a148c;
+    stroke-width: 3.5;
+}
+
+.clock-display .clock-number {
+    fill: #37474f;
+    font-size: 14px;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
 }
 
 .clock-display line {
     stroke-linecap: round;
 }
 
+/* Analog / Digital 24h Toggle & Digital Watch */
+.clock-style-toggle {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.75);
+    padding: 4px;
+    border-radius: 14px;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.clock-style-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #6a1b9a;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.clock-style-btn.active {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 2px 6px rgba(156, 39, 176, 0.25);
+}
+
+.digital-clock-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.digital-watch-frame {
+    background: #263238;
+    border: 6px solid #4a148c;
+    border-radius: 26px;
+    padding: 20px 34px;
+    box-shadow: 0 8px 20px rgba(74, 20, 140, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.digital-time {
+    font-family: ui-monospace, 'Cascadia Mono', 'Consolas', monospace;
+    font-size: 3.2rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: #80cbc4;
+    text-shadow: 0 0 12px rgba(128, 203, 196, 0.45);
+}
+
+/* Interactive Set Clock Mode */
+.set-clock-box {
+    padding: 24px 20px;
+    margin-bottom: 18px;
+}
+
+.target-time-text {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #4a148c;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.interactive-clock svg {
+    cursor: pointer;
+    touch-action: none;
+}
+
+.clock-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.clock-control-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-tag {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    min-width: 82px;
+}
+
+.hour-tag {
+    color: #4a148c;
+}
+
+.min-tag {
+    color: #c2185b;
+}
+
+.step-btn {
+    border: none;
+    border-radius: 18px;
+    padding: 14px 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s, filter 0.15s;
+}
+
+.step-btn:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+.hour-btn {
+    background: #ede7f6;
+    color: #4a148c;
+}
+
+.min-btn {
+    background: #fce4ec;
+    color: #ad1457;
+}
+
+.check-clock-btn {
+    width: 100%;
+    border: none;
+    border-radius: 22px;
+    padding: 16px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    background: var(--accent-color);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(156, 39, 176, 0.25);
+    transition: transform 0.15s, background-color 0.2s;
+}
+
+.check-clock-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.check-clock-btn:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.check-clock-btn.correct {
+    background: #43a047;
+}
+
+.check-clock-btn.wrong {
+    background: #e53935;
+}
+
 /* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
 .modal-content {
     background: white;
     border-radius: 30px;
-    padding: 40px;
+    padding: 36px 28px;
     text-align: center;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
     border: none;
+    max-width: 380px;
+    width: 100%;
 }
 
 .modal h2 {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+}
+
+.modal-record {
+    color: var(--accent-color);
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin: 8px 0;
 }
 
 .restart-btn {

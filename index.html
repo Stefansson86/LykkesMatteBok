@@ -4,7 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#9c27b0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Mattebok">
     <title>Lykkes Mattebok</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -17,29 +24,73 @@
                 <h1 class="logo-title">Lykkes<br>Mattebok</h1>
                 <span class="logo-stars">✨ ⭐ ✨</span>
             </div>
+
+            <!-- Difficulty Selector -->
+            <div class="difficulty-section">
+                <span class="difficulty-label">Välj nivå:</span>
+                <div class="difficulty-pills" id="difficultySelector" role="group" aria-label="Svårighetsgrad">
+                    <button type="button" class="diff-btn" data-level="easy">Lätt</button>
+                    <button type="button" class="diff-btn active" data-level="medium">Medel</button>
+                    <button type="button" class="diff-btn" data-level="hard">Svår</button>
+                </div>
+                <p class="difficulty-desc" id="difficultyDesc">Tal 1–20 • Hel, halv &amp; kvart</p>
+            </div>
+
             <h2>Vad vill du spela?</h2>
             <div class="menu-buttons">
                 <button class="menu-btn" id="startMathBtn">
                     <span class="icon">➕</span>
-                    <span class="text">Räkna</span>
+                    <span class="menu-btn-info">
+                        <span class="text">Räkna</span>
+                        <span class="best-badge" id="mathBestBadge">Rekord: 0 ⭐</span>
+                    </span>
+                </button>
+                <button class="menu-btn" id="startCrossingBtn">
+                    <span class="icon">🔟</span>
+                    <span class="menu-btn-info">
+                        <span class="text">Övergångar</span>
+                        <span class="best-badge" id="crossingBestBadge">Rekord: 0 ⭐</span>
+                    </span>
+                </button>
+                <button class="menu-btn" id="startMultBtn">
+                    <span class="icon">✖️</span>
+                    <span class="menu-btn-info">
+                        <span class="text">Multiplikation</span>
+                        <span class="best-badge" id="multBestBadge">Rekord: 0 ⭐</span>
+                    </span>
                 </button>
                 <button class="menu-btn" id="startClockBtn">
                     <span class="icon">🕒</span>
-                    <span class="text">Klockan</span>
+                    <span class="menu-btn-info">
+                        <span class="text">Klockan</span>
+                        <span class="best-badge" id="clockBestBadge">Rekord: 0 ⭐</span>
+                    </span>
+                </button>
+                <button class="menu-btn" id="startSetClockBtn">
+                    <span class="icon">🕰️</span>
+                    <span class="menu-btn-info">
+                        <span class="text">Ställ klockan</span>
+                        <span class="best-badge" id="setClockBestBadge">Rekord: 0 ⭐</span>
+                    </span>
                 </button>
             </div>
+
+            <button class="install-btn hidden" id="installBtn">
+                <span>📲</span>
+                <span>Installera som app</span>
+            </button>
         </div>
 
         <!-- Header with stats (Shared) -->
         <div class="header hidden" id="gameHeader">
-            <button id="backBtn" class="back-btn">✕</button>
+            <button id="backBtn" class="back-btn" aria-label="Tillbaka till menyn">✕</button>
             <div class="stats">
+                <span class="level-pill" id="levelBadge">Medel</span>
                 <div class="streak-display">
                     <span class="streak-value" id="currentStreak">0</span>
                     <span class="star">⭐</span>
                 </div>
             </div>
-            <!-- Settings/Lives placeholder if needed, or just simplified -->
             <div class="lives" id="lives">
                 <span class="heart">❤️</span>
                 <span class="heart">❤️</span>
@@ -49,13 +100,16 @@
 
         <!-- Math Game Area -->
         <div id="math-game" class="game-area hidden">
-            <!-- Question box -->
             <div class="question-box">
+                <div class="question-tools">
+                    <button type="button" class="tool-btn" id="mathSpeakBtn" title="Läs upp frågan" aria-label="Läs upp frågan">🔊</button>
+                    <button type="button" class="tool-btn" id="mathHintBtn" title="Visa ledtråd" aria-label="Visa ledtråd">💡</button>
+                </div>
                 <div class="question-label">Vad är summan?</div>
                 <div class="equation" id="equation">3 + 3</div>
+                <div class="hint-box hidden" id="mathHintBox"></div>
             </div>
 
-            <!-- Answer grid (2x2) -->
             <div class="answer-grid" id="mathAnswers">
                 <button class="answer-btn" data-answer="0">6</button>
                 <button class="answer-btn" data-answer="1">8</button>
@@ -66,35 +120,83 @@
 
         <!-- Clock Game Area -->
         <div id="clock-game" class="game-area hidden">
-            <!-- Clock display -->
             <div class="question-box">
+                <div class="question-tools">
+                    <button type="button" class="tool-btn" id="clockSpeakBtn" title="Läs upp frågan" aria-label="Läs upp frågan">🔊</button>
+                    <button type="button" class="tool-btn" id="clockHintBtn" title="Visa ledtråd" aria-label="Visa ledtråd">💡</button>
+                </div>
+                <div class="clock-style-toggle" id="clockStyleToggle" role="group" aria-label="Klocktyp">
+                    <button type="button" class="clock-style-btn active" data-style="analog">🕒 Analog</button>
+                    <button type="button" class="clock-style-btn" data-style="digital">⌚ Digital 24h</button>
+                </div>
                 <div class="question-label">Vad är klockan?</div>
                 <div class="clock-display" id="clockDisplay">
-                    <!-- SVG Clock will be injected here -->
-                    <svg viewBox="0 0 200 200" width="200" height="200">
-                        <circle cx="100" cy="100" r="95" stroke="black" stroke-width="4" fill="white" />
-                        <!-- Hour marks -->
-                        <line x1="100" y1="10" x2="100" y2="25" stroke="black" stroke-width="4" />
-                        <line x1="100" y1="190" x2="100" y2="175" stroke="black" stroke-width="4" />
-                        <line x1="10" y1="100" x2="25" y2="100" stroke="black" stroke-width="4" />
-                        <line x1="190" y1="100" x2="175" y2="100" stroke="black" stroke-width="4" />
+                    <svg viewBox="0 0 200 200" width="200" height="200" aria-label="Analog klocka">
+                        <circle cx="100" cy="100" r="95" class="clock-face" />
+                        <g id="clockTicks"></g>
+                        <g id="clockNumbers"></g>
                         <!-- Hands -->
-                        <line id="hourHand" x1="100" y1="100" x2="100" y2="60" stroke="black" stroke-width="6"
+                        <line id="hourHand" x1="100" y1="100" x2="100" y2="55" stroke="#4a148c" stroke-width="6.5"
                             stroke-linecap="round" />
-                        <line id="minuteHand" x1="100" y1="100" x2="100" y2="40" stroke="black" stroke-width="4"
+                        <line id="minuteHand" x1="100" y1="100" x2="100" y2="30" stroke="#ec407a" stroke-width="4"
                             stroke-linecap="round" />
-                        <circle cx="100" cy="100" r="5" fill="black" />
+                        <circle cx="100" cy="100" r="5.5" class="clock-center" />
                     </svg>
                 </div>
+                <div class="digital-clock-display hidden" id="digitalClockDisplay">
+                    <div class="digital-watch-frame">
+                        <span class="digital-time" id="digitalTimeText">15:30</span>
+                    </div>
+                </div>
+                <div class="hint-box hidden" id="clockHintBox"></div>
             </div>
 
-            <!-- Answer grid (2x2) for Clock -->
             <div class="answer-grid" id="clockAnswers">
                 <button class="answer-btn" data-answer="00:00">00:00</button>
                 <button class="answer-btn" data-answer="00:00">00:00</button>
                 <button class="answer-btn" data-answer="00:00">00:00</button>
                 <button class="answer-btn" data-answer="00:00">00:00</button>
             </div>
+        </div>
+
+        <!-- Set Clock Game Area (Interactive) -->
+        <div id="set-clock-game" class="game-area hidden">
+            <div class="question-box set-clock-box">
+                <div class="question-tools">
+                    <button type="button" class="tool-btn" id="setClockSpeakBtn" title="Läs upp tiden" aria-label="Läs upp tiden">🔊</button>
+                    <button type="button" class="tool-btn" id="setClockHintBtn" title="Visa ledtråd" aria-label="Visa ledtråd">💡</button>
+                </div>
+                <div class="question-label">Ställ klockan på</div>
+                <div class="target-time-text" id="targetTimeText">halv 4</div>
+                <div class="clock-display interactive-clock" id="setClockDisplay">
+                    <svg id="setClockSvg" viewBox="0 0 200 200" width="200" height="200" aria-label="Interaktiv klocka">
+                        <circle cx="100" cy="100" r="95" class="clock-face" />
+                        <g id="setClockTicks"></g>
+                        <g id="setClockNumbers"></g>
+                        <line id="setHourHand" x1="100" y1="100" x2="100" y2="55" stroke="#4a148c" stroke-width="6.5"
+                            stroke-linecap="round" />
+                        <line id="setMinuteHand" x1="100" y1="100" x2="100" y2="30" stroke="#ec407a" stroke-width="4"
+                            stroke-linecap="round" />
+                        <circle cx="100" cy="100" r="5.5" class="clock-center" />
+                    </svg>
+                </div>
+                <div class="hint-box hidden" id="setClockHintBox"></div>
+            </div>
+
+            <div class="clock-controls">
+                <div class="clock-control-row">
+                    <button type="button" class="step-btn hour-btn" id="hourDownBtn">− 1 tim</button>
+                    <span class="control-tag hour-tag">Timvisare</span>
+                    <button type="button" class="step-btn hour-btn" id="hourUpBtn">+ 1 tim</button>
+                </div>
+                <div class="clock-control-row">
+                    <button type="button" class="step-btn min-btn" id="minDownBtn">− 15 min</button>
+                    <span class="control-tag min-tag">Minutvisare</span>
+                    <button type="button" class="step-btn min-btn" id="minUpBtn">+ 15 min</button>
+                </div>
+            </div>
+
+            <button type="button" class="check-clock-btn" id="checkClockBtn">Kolla svaret! ✓</button>
         </div>
 
         <!-- Feedback message -->
@@ -105,6 +207,7 @@
             <div class="modal-content">
                 <h2>🎉 Bra försök! 🎉</h2>
                 <p class="modal-message" id="modalMessage">Du klarade en rad på <span id="finalStreak">0</span>!</p>
+                <p class="modal-record hidden" id="modalRecord">🏆 Nytt rekord!</p>
                 <p class="encouragement">Fortsätt öva så blir du jättebra på matte! 💪</p>
                 <button class="restart-btn" id="restartBtn">Försök igen!</button>
                 <button class="restart-btn secondary" id="menuBtn">Till menyn</button>
